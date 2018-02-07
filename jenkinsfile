@@ -1,0 +1,16 @@
+pipeline {
+   agent any
+   options { skipDefaultCheckout() }
+   stages {
+       stage("checkout") {
+           steps {
+        checkout([$class: 'GitSCM', branches: [[name: '*/ready/**']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout'], pretestedIntegration(gitIntegrationStrategy: squash(), integrationBranch: 'master', repoName: 'origin')], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'pipCredentials', url: 'https://your.repo.com.git']]])
+           }
+       }
+       stage("publish") {
+           steps {
+               pretestedIntegrationPublisher()
+           }
+       }
+   }
+}
